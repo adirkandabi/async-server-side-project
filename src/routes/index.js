@@ -1,9 +1,7 @@
 const express = require("express");
+const aboutRouter = require("./about.js");
 const router = express.Router();
-
-const aboutRouter = require("./about");
 
 // Register the developers route
 router.use("/about", aboutRouter);
-
 module.exports = router;
