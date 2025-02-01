@@ -1,21 +1,24 @@
+// app.js
 require("dotenv").config();
-const routes = require("./routes/index.js");
 const express = require("express");
 const connectToDatabase = require("./models/db.js");
+const Models = require("./models");
+const routes = require("./routes/index.js");
+
 const app = express();
-let db;
+const models = new Models();
 
 async function startServer() {
   try {
-    // Wait for the database connection to be established
-    db = await connectToDatabase();
-    // Middleware
-    app.use(express.json());
+    const db = await connectToDatabase();
+    await models.init(db);
 
-    // Use all routes
+    // Add models to app locals so they're accessible in routes
+    app.locals.models = models;
+
+    app.use(express.json());
     app.use("/api", routes);
 
-    // Start the server
     app.listen(process.env.PORT, () => {
       console.log(`Server running on http://localhost:${process.env.PORT}`);
     });
