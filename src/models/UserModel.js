@@ -21,10 +21,11 @@ class UserModel extends BaseModel {
 
     return await this.collection.findOne({ id: id });
   }
-  async findByFirstName(name) {
-    console.log(name);
-
-    return this.collection.findOne({ first_name: name });
+  async updateTotalSpent(userId, sum) {
+    return await this.collection.updateOne(
+      { id: userId }, // Find the user by ID
+      { $inc: { total_spent: sum } } // Increment the total_spent field
+    );
   }
 
   // Add more methods as needed

@@ -17,7 +17,14 @@ router.get("/", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json(user);
+    res
+      .status(200)
+      .json({
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        total: user.total_spent,
+      });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ error: "Internal server error" });
