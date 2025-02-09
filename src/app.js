@@ -15,7 +15,13 @@ async function startServer() {
 
     // Add models to app locals so they're accessible in routes
     app.locals.models = models;
-
+    app.locals.allowedCategories = [
+      "food",
+      "health",
+      "housing",
+      "sport",
+      "education",
+    ];
     app.use(express.json());
     app.use("/api", routes);
 

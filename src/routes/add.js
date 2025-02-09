@@ -15,32 +15,30 @@ router.post("/", async (req, res) => {
   } else {
     body.time = new Date(body.time);
   }
-  if (missingFields.length) {
+  if (missingFields.length > 0) {
     res.status(400).json({
       status: "error",
-      message:
-        "The following fields are missing : " + missingFields.splice(","),
+      message: "The following fields are missing : " + missingFields.join(","),
     });
   } else {
     try {
-      //   const userModel = req.app.locals.models.users;
-      //   const updateUserSpentRes = await userModel.updateTotalSpent(
-      //     body.user_id,
-      //     Number(body.sum)
-      //   );
-      //   if (updateUserSpentRes.matchedCount === 0) {
-      //     return res.status(404).json({ error: "User not found" });
-      //   }
-      const CostModel = req.app.locals.models.costs;
-      const result = await CostModel.create(body);
-      if (!result.acknowledged) {
+      if (!req.app.locals.allowedCategories.includes(body.category)) {
+        res.status(400).json({
+          status: "error",
+          message: `category ${body.category} is not supported`,
+        });
+      } else {
+        const CostModel = req.app.locals.models.costs;
+        const result = await CostModel.create(body);
+        if (!result.acknowledged) {
+          res
+            .status(500)
+            .json({ status: "error", message: "The cost could not be added" });
+        }
         res
-          .status(500)
-          .json({ status: "error", message: "The cost could not be added" });
+          .status(200)
+          .json({ status: "success", message: "Cost added successfully" });
       }
-      res
-        .status(200)
-        .json({ status: "success", message: "Cost added successfully" });
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ error: "Internal server error" });

@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 // Endpoint to get details of specific user
-router.get("/", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const userId = req.query.id;
+    const userId = req.params.id;
 
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
@@ -17,18 +17,18 @@ router.get("/", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res
-      .status(200)
-      .json({
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        total: user.total_spent,
-      });
+    res.status(200).json({
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      total: user.total_spent,
+    });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
+router.get("/", async (req, res) => {
+  return res.status(400).json({ error: "API bad request" });
+});
 module.exports = router;

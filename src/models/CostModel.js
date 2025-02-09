@@ -19,5 +19,15 @@ class CostModel extends BaseModel {
   async findByUserId(id) {
     return await this.collection.findOne({ user_id: id });
   }
+  async getUserReport(userId, month, year) {
+    const startDate = new Date(year, month - 1, 1); // First day of the month
+    const endDate = new Date(year, month, 1); // First day of the next month
+    return await this.collection
+      .find({
+        user_id: userId,
+        time: { $gte: startDate, $lt: endDate }, // Match documents within the month
+      })
+      .toArray();
+  }
 }
 module.exports = CostModel;

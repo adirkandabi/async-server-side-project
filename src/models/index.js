@@ -1,18 +1,18 @@
 const CostModel = require("./CostModel");
 const UserModel = require("./UserModel");
-// Import other models...
+const ReportsModel = require("./ReportsModel");
 
 class Models {
   constructor() {
     this.users = new UserModel();
     this.costs = new CostModel();
-    // Initialize other models...
+    this.reports = new ReportsModel();
   }
 
   async init(db) {
     await this.users.init(db);
     await this.costs.init(db);
-    // Initialize other models...
+    await this.reports.init(db);
   }
 }
 
