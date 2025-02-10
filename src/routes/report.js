@@ -1,10 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-// Endpoint to get details of specific user
+/**
+ * GET / - Fetch user report for a specific month and year.
+ */
 router.get("/", async (req, res) => {
   const { id, year, month } = req.query;
   const missingFields = [];
+
+  // Validate required fields
   if (!id) missingFields.push("id");
   if (!year) missingFields.push("year");
   if (!month) missingFields.push("month");
@@ -12,89 +16,81 @@ router.get("/", async (req, res) => {
   if (missingFields.length > 0) {
     return res.status(400).json({
       status: "error",
-      message: "The following fields are missing: " + missingFields.join(", "),
+      message: `The following fields are missing: ${missingFields.join(", ")}`,
     });
   }
 
   try {
-    const reportsModel = req.app.locals.models.reports;
-    const costModel = req.app.locals.models.costs;
-    const allowedCategories = req.app.locals.allowedCategories;
-    const computedReports = await reportsModel.findReport(id, month, year);
-    if (computedReports && !isCurrentMonth(parseInt(month), parseInt(year))) {
+    const { reports: reportsModel, costs: costModel } = req.app.locals.models;
+    const { allowedCategories } = req.app.locals;
+
+    // Retrieve precomputed report if it exists
+    const computedReport = await reportsModel.findReport(id, month, year);
+
+    // If a precomputed report exists and it's NOT the current month, return it
+    if (computedReport && !isCurrentMonth(parseInt(month), parseInt(year))) {
       return res.status(200).json({
         status: "success",
-        userid: computedReports.userid,
-        month: computedReports.month,
-        year: computedReports.year,
-        costs: computedReports.costs,
-      });
-    } else {
-      const expenses = await costModel.getUserReport(
-        id,
-        parseInt(month),
-        parseInt(year)
-      );
-
-      const costs = {};
-      allowedCategories.forEach((category) => {
-        const currCategoryObjs = expenses.filter(
-          (doc) => doc.category === category
-        );
-        costs[category] = [];
-        currCategoryObjs.forEach((obj) => {
-          costs[category].push({
-            sum: obj.sum,
-            description: obj.description,
-            day: obj.time.getUTCDate(),
-          });
-        });
-      });
-      if (
-        !Object.values(costs).every(
-          (value) => Array.isArray(value) && value.length === 0
-        )
-      ) {
-        if (computedReports) {
-          await reportsModel.updateReport(id, month, year, costs);
-        } else {
-          await reportsModel.create({
-            userid: id,
-            month: month,
-            year: year,
-            costs: costs,
-          });
-        }
-      }
-
-      return res.status(200).json({
-        status: "success",
-        userid: id,
-        month: month,
-        year: year,
-        costs: costs,
+        userid: computedReport.userid,
+        month: computedReport.month,
+        year: computedReport.year,
+        costs: computedReport.costs,
       });
     }
+
+    // Fetch cost details for the given user, month, and year
+    const expenses = await costModel.getUserReport(
+      id,
+      parseInt(month),
+      parseInt(year)
+    );
+
+    // Organize expenses into categories
+    const costs = allowedCategories.reduce((acc, category) => {
+      acc[category] = expenses
+        .filter((doc) => doc.category === category)
+        .map((obj) => ({
+          sum: obj.sum,
+          description: obj.description,
+          day: obj.time.getUTCDate(),
+        }));
+      return acc;
+    }, {});
+
+    // If there are costs, update or insert the report
+    if (Object.values(costs).some((value) => value.length > 0)) {
+      if (computedReport) {
+        await reportsModel.updateReport(id, month, year, costs);
+      } else {
+        await reportsModel.create({ userid: id, month, year, costs });
+      }
+    }
+
+    // Return the updated/generated report
+    return res.status(200).json({
+      status: "success",
+      userid: id,
+      month,
+      year,
+      costs,
+    });
   } catch (error) {
     console.error("Error fetching user report:", error);
-    return res
-      .status(500)
-      .json({ status: "error", message: "Internal Server Error" });
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
   }
 });
+
+/**
+ * Helper function to check if the given month and year match the current month.
+ */
 function isCurrentMonth(month, year) {
   const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0 for January, so add 1
-
-  if (year < currentYear) {
-    return false; // The year is already in the past
-  }
-
-  if (year === currentYear && month < currentMonth) {
-    return false; // The month has already passed within the current year
-  }
-
-  return true; // It's either the current month or a future month
+  return (
+    year === currentDate.getFullYear() && month === currentDate.getMonth() + 1
+  );
 }
+
 module.exports = router;

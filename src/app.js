@@ -1,4 +1,3 @@
-// app.js
 require("dotenv").config();
 const express = require("express");
 const connectToDatabase = require("./models/db.js");
@@ -10,10 +9,11 @@ const models = new Models();
 
 async function startServer() {
   try {
+    // Connect to the database
     const db = await connectToDatabase();
     await models.init(db);
 
-    // Add models to app locals so they're accessible in routes
+    // Add models and other global settings to app.locals
     app.locals.models = models;
     app.locals.allowedCategories = [
       "food",
@@ -22,11 +22,17 @@ async function startServer() {
       "sport",
       "education",
     ];
+
+    // Middleware
     app.use(express.json());
+
+    // Routes
     app.use("/api", routes);
 
-    app.listen(process.env.PORT, () => {
-      console.log(`Server running on http://localhost:${process.env.PORT}`);
+    // Server listening
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
     });
   } catch (err) {
     console.error("Failed to start server:", err);
@@ -34,4 +40,5 @@ async function startServer() {
   }
 }
 
+// Start the server
 startServer();

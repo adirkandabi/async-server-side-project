@@ -1,27 +1,31 @@
 const express = require("express");
 const router = express.Router();
 
-// Endpoint to get details of specific user
+/**
+ * GET /:id - Fetch user details by custom ID, including total expenses.
+ */
 router.get("/:id", async (req, res) => {
   try {
-    const userId = req.params.id;
-
+    const { id: userId } = req.params;
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
-    const userModel = req.app.locals.models.users;
-    const costsModel = req.app.locals.models.costs;
-    // Find by custom id field
-    const user = await userModel.findByCustomId(userId);
 
+    const { users: userModel, costs: costsModel } = req.app.locals.models;
+
+    // Find user by custom ID field
+    const user = await userModel.findByCustomId(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
+    // Fetch all expenses associated with the user
     const userExpenses = await costsModel.findAllById(userId);
-    let totalSpent = 0;
-    userExpenses.forEach((expense) => {
-      totalSpent += expense.sum;
-    });
+    const totalSpent = userExpenses.reduce(
+      (total, expense) => total + expense.sum,
+      0
+    );
+
     return res.status(200).json({
       id: user.id,
       first_name: user.first_name,
@@ -33,7 +37,12 @@ router.get("/:id", async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-router.get("/", async (req, res) => {
+
+/**
+ * GET / - Handle invalid requests to the root of this route.
+ */
+router.get("/", (req, res) => {
   return res.status(400).json({ error: "API bad request" });
 });
+
 module.exports = router;
