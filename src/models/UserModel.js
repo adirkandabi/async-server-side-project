@@ -17,8 +17,6 @@ class UserModel extends BaseModel {
     return this.collection.insertOne(userData);
   }
   async findByCustomId(id) {
-    console.log("id : " + id);
-
     return await this.collection.findOne({ id: id });
   }
   async updateTotalSpent(userId, sum) {

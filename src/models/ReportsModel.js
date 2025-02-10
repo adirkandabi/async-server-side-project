@@ -8,8 +8,6 @@ class ReportsModel extends BaseModel {
     return this.collection.insertOne(report);
   }
   async findReport(id, month, year) {
-    console.log(id, month, year);
-
     return await this.collection.findOne({
       userid: id,
       month: month,

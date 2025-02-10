@@ -5,8 +5,8 @@ class CostModel extends BaseModel {
     super("costs"); // collection name
   }
 
-  async findAll() {
-    return this.collection.find({}).toArray();
+  async findAllById(id) {
+    return this.collection.find({ user_id: id }).toArray();
   }
 
   async findById(id) {

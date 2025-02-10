@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
     { first_name: "Ben", last_name: "Simany" },
   ];
 
-  res.json(developers);
+  return res.status(200).json({ developers: developers });
 });
 
 module.exports = router;

@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
     const allowedCategories = req.app.locals.allowedCategories;
     const computedReports = await reportsModel.findReport(id, month, year);
     if (computedReports && !isCurrentMonth(parseInt(month), parseInt(year))) {
-      res.status(200).json({
+      return res.status(200).json({
         status: "success",
         userid: computedReports.userid,
         month: computedReports.month,
@@ -67,7 +67,7 @@ router.get("/", async (req, res) => {
         }
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         status: "success",
         userid: id,
         month: month,
