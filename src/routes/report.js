@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
   const parsedYear = parseInt(year);
 
   // Check if the year and month are valid numbers
-  if (isNaN(parsedYear) || isNaN(parsedMonth)) {
+  if (!isNaN(parsedYear) || !isNaN(parsedMonth)) {
     return res.status(400).json({
       status: "error",
       message: `year and month fields must be numbers`,
@@ -97,7 +97,6 @@ router.get("/", async (req, res) => {
     });
   }
 });
-
 /**
  * Helper function to check if the given month and year match the current month.
  *
@@ -112,5 +111,4 @@ function isCurrentMonth(month, year) {
     year === currentDate.getFullYear() && month === currentDate.getMonth() + 1
   );
 }
-
 module.exports = router;

@@ -1,5 +1,4 @@
 const BaseModel = require("./BaseModel");
-
 /**
  * UserModel handles database operations related to users.
  * It extends the BaseModel to inherit common database functionality.
@@ -28,23 +27,5 @@ class UserModel extends BaseModel {
   async findByCustomId(id) {
     return this.collection.findOne({ id: id });
   }
-
-  /**
-   * Updates the total amount a user has spent.
-   * This method increments the `total_spent` field by a given sum.
-   *
-   * @param {string} userId - The user ID.
-   * @param {number} sum - The amount to increment the total spent.
-   * @returns {Promise<import("mongodb").UpdateResult>} The result of the update operation.
-   */
-  async updateTotalSpent(userId, sum) {
-    return this.collection.updateOne(
-      { id: userId }, // Find the user by ID
-      { $inc: { total_spent: sum } } // Increment the total_spent field
-    );
-  }
-
-  // Additional methods can be added as needed
 }
-
 module.exports = UserModel;

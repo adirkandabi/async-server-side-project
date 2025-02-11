@@ -33,7 +33,7 @@ async function connectToDatabase() {
     return dbInstance;
   } catch (err) {
     console.error("MongoDB Connection Error:", err);
-    throw err; // Re-throw the error for better error handling
+    throw err;
   }
 }
 

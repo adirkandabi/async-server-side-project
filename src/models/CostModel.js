@@ -24,16 +24,6 @@ class CostModel extends BaseModel {
   }
 
   /**
-   * Finds a single cost record by its unique document ID.
-   *
-   * @param {string} id - The document ID (_id).
-   * @returns {Promise<Object|null>} A promise that resolves to the cost document or null if not found.
-   */
-  async findById(id) {
-    return this.collection.findOne({ _id: id });
-  }
-
-  /**
    * Inserts a new cost record into the collection.
    *
    * @param {Object} costData - The cost data to be inserted.

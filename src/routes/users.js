@@ -47,7 +47,6 @@ router.get("/:id", async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
 /**
  * GET / - Handle invalid requests to the root of this route.
  *
@@ -59,5 +58,4 @@ router.get("/", (req, res) => {
     .status(400)
     .json({ error: "API bad request, you need to specify the user id" });
 });
-
 module.exports = router;
