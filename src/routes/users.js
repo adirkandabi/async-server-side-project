@@ -55,7 +55,9 @@ router.get("/:id", async (req, res) => {
  * @returns {object} 400 - A JSON object with an error message indicating a bad request to the API.
  */
 router.get("/", (req, res) => {
-  return res.status(400).json({ error: "API bad request" });
+  return res
+    .status(400)
+    .json({ error: "API bad request, you need to specify the user id" });
 });
 
 module.exports = router;
