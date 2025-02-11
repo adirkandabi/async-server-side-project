@@ -30,9 +30,10 @@ router.get("/", async (req, res) => {
 
   const parsedMonth = parseInt(month);
   const parsedYear = parseInt(year);
+  console.log(parsedMonth);
 
   // Check if the year and month are valid numbers
-  if (!isNaN(parsedYear) || !isNaN(parsedMonth)) {
+  if (isNaN(parsedYear) || isNaN(parsedMonth)) {
     return res.status(400).json({
       status: "error",
       message: `year and month fields must be numbers`,
@@ -44,7 +45,11 @@ router.get("/", async (req, res) => {
     const { allowedCategories } = req.app.locals;
 
     // Retrieve precomputed report if it exists
-    const computedReport = await reportsModel.findReport(id, month, year);
+    const computedReport = await reportsModel.findReport(
+      id,
+      parsedMonth,
+      parsedYear
+    );
 
     // If a precomputed report exists and it's NOT the current month, return it
     if (computedReport && !isCurrentMonth(parsedMonth, parsedYear)) {
@@ -75,9 +80,14 @@ router.get("/", async (req, res) => {
     // If there are costs, update or insert the report
     if (Object.values(costs).some((value) => value.length > 0)) {
       if (computedReport) {
-        await reportsModel.updateReport(id, month, year, costs);
+        await reportsModel.updateReport(id, parsedMonth, parsedYear, costs);
       } else {
-        await reportsModel.create({ userid: id, month, year, costs });
+        await reportsModel.create({
+          userid: id,
+          month: parsedMonth,
+          year: parsedYear,
+          costs,
+        });
       }
     }
 
@@ -85,8 +95,8 @@ router.get("/", async (req, res) => {
     return res.status(200).json({
       status: "success",
       userid: id,
-      month,
-      year,
+      month: parsedMonth,
+      year: parsedYear,
       costs,
     });
   } catch (error) {
