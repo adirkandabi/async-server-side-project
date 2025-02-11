@@ -1,73 +1,69 @@
 /**
  * @module tests/users
- * @description Test suite for user-related API endpoints
+ * @description Test cases for user-related API endpoints.
  */
 
-const request = require('supertest');
-const { app } = require('./setup');
+const request = require("supertest");
+const { app } = require("./setup");
 
-describe('Users API', () => {
-  /* Test user ID that meets the minimum length requirement */
-  const testUserId = '12345';
-  let createdUser;
+describe("User API Endpoints", () => {
+  /* User ID that satisfies the minimum length condition */
+  const validUserId = "12345";
+  let newUser;
 
   /**
    * Test suite for user creation endpoint
    * @group POST /api/users
    */
-  describe('POST /api/users', () => {
-    /* Test successful user creation with valid data */
-    it('should create a new user successfully', async () => {
-      const response = await request(app)
-        .post('/api/users')
-        .send({
-          id: testUserId,
-          first_name: 'TestFirst',
-          last_name: 'TestLast',
-          birthday: '1990-01-01',
-          marital_status: 'single'
-        });
+  describe("POST /api/users", () => {
+    /* Test for successful user creation with valid input */
+    it("should successfully create a new user", async () => {
+      const response = await request(app).post("/api/users").send({
+        id: validUserId,
+        first_name: "John",
+        last_name: "Doe",
+        birthday: "1985-05-15",
+        marital_status: "married",
+      });
       expect(response.statusCode).toBe(201);
-      expect(response.body).toHaveProperty('_id');
-      expect(response.body.id).toBe(testUserId);
-      expect(response.body.first_name).toBe('TestFirst');
+      expect(response.body).toHaveProperty("_id");
+      expect(response.body.id).toBe(validUserId);
+      expect(response.body.first_name).toBe("John");
 
-      /* Store created user for subsequent tests */
-      createdUser = response.body;
+      /* Save the newly created user for further tests */
+      newUser = response.body;
     });
 
-    /* Test validation of user ID format */
-    it('should fail if ID is invalid', async () => {
-      const response = await request(app)
-        .post('/api/users')
-        .send({
-          id: '123', // Invalid: less than 5 digits
-          first_name: 'Invalid',
-          last_name: 'User',
-          birthday: '1990-01-01',
-          marital_status: 'single'
-        });
+    /* Test validation for user ID format */
+    it("should return an error if the ID format is invalid", async () => {
+      const response = await request(app).post("/api/users").send({
+        id: "123", // Invalid: ID is shorter than 5 characters
+        first_name: "Invalid",
+        last_name: "User",
+        birthday: "1985-05-15",
+        marital_status: "married",
+      });
       expect(response.statusCode).toBe(400);
       expect(response.body.error).toMatch(/Invalid ID/);
     });
   });
 
   /**
-   * Test suite for user retrieval endpoint
+   * Test suite for retrieving user details by ID
    * @group GET /api/users/:id
    */
-  describe('GET /api/users/:id', () => {
-    /* Test successful retrieval of existing user */
-    it('should return user details for a valid ID', async () => {
-      const response = await request(app).get(`/api/users/${testUserId}`);
+  describe("GET /api/users/:id", () => {
+    /* Test for successful user retrieval by a valid ID */
+    it("should return user information for a valid ID", async () => {
+      const response = await request(app).get(`/api/users/${validUserId}`);
       expect(response.statusCode).toBe(200);
-      expect(response.body.id).toBe(testUserId);
-      expect(response.body).toHaveProperty('total');
+      expect(response.body.id).toBe(validUserId);
+      expect(response.body).toHaveProperty("total");
     });
 
-    /* Test handling of non-existent user request */
-    it('should return 404 for non-existing user', async () => {
-      const response = await request(app).get('/api/users/99999');
+    /* Test for handling requests for non-existing users */
+    it("should return 404 if the user does not exist", async () => {
+      const response = await request(app).get("/api/users/99999");
       expect(response.statusCode).toBe(404);
       expect(response.body.error).toMatch(/User not found/);
     });

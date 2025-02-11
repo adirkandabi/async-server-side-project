@@ -3,10 +3,19 @@ const router = express.Router();
 
 /**
  * GET /:id - Fetch user details by custom ID, including total expenses.
+ *
+ * @route GET /:id
+ * @param {string} id - The custom user ID.
+ * @returns {object} 200 - A JSON object containing the user details and total expenses.
+ * @returns {object} 400 - A JSON object with an error message if the user ID is missing.
+ * @returns {object} 404 - A JSON object with an error message if the user is not found.
+ * @returns {object} 500 - A JSON object with an error message for any server errors.
  */
 router.get("/:id", async (req, res) => {
   try {
     const { id: userId } = req.params;
+
+    // Check if user ID is provided
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
@@ -26,6 +35,7 @@ router.get("/:id", async (req, res) => {
       0
     );
 
+    // Return the user details and total expenses
     return res.status(200).json({
       id: user.id,
       first_name: user.first_name,
@@ -40,6 +50,9 @@ router.get("/:id", async (req, res) => {
 
 /**
  * GET / - Handle invalid requests to the root of this route.
+ *
+ * @route GET /
+ * @returns {object} 400 - A JSON object with an error message indicating a bad request to the API.
  */
 router.get("/", (req, res) => {
   return res.status(400).json({ error: "API bad request" });

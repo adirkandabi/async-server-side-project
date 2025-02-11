@@ -2,7 +2,20 @@ const express = require("express");
 const router = express.Router();
 
 /**
- * POST / - Endpoint to add a cost item
+ * POST / - Adds a cost item to the database.
+ *
+ * @route POST /
+ * @group Costs - Operations related to cost management
+ * @param {Object} req.body - The request body containing cost details.
+ * @param {string} req.body.user_id - The ID of the user associated with the cost.
+ * @param {string} req.body.category - The category of the cost.
+ * @param {string} req.body.description - A description of the cost.
+ * @param {number} req.body.sum - The amount spent.
+ * @param {string} [req.body.time] - The timestamp of the cost (defaults to current date if not provided).
+ * @returns {Object} 200 - Success response with the newly added cost item.
+ * @returns {Object} 400 - Error response if required fields are missing or invalid.
+ * @returns {Object} 404 - Error response if the user does not exist.
+ * @returns {Object} 500 - Error response for internal server errors.
  */
 router.post("/", async (req, res) => {
   const body = req.body;
@@ -22,6 +35,13 @@ router.post("/", async (req, res) => {
     return res.status(400).json({
       status: "error",
       message: `The following fields are missing: ${missingFields.join(", ")}`,
+    });
+  }
+
+  if (parseInt(body.sum) <= 0) {
+    return res.status(400).json({
+      status: "error",
+      message: "sum field must be greater than zero",
     });
   }
 

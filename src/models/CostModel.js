@@ -1,9 +1,13 @@
 const BaseModel = require("./BaseModel");
 
+/**
+ * CostModel represents the "costs" collection in the database.
+ * It extends BaseModel to provide methods for handling cost-related operations.
+ */
 class CostModel extends BaseModel {
   /**
-   * CostModel represents the "costs" collection in the database.
-   * It extends BaseModel to inherit common database functionality.
+   * Creates an instance of CostModel.
+   * Specifies "costs" as the MongoDB collection name.
    */
   constructor() {
     super("costs"); // Specify the MongoDB collection name
@@ -13,7 +17,7 @@ class CostModel extends BaseModel {
    * Finds all cost records associated with a given user ID.
    *
    * @param {string} id - The user ID.
-   * @returns {Promise<Array>} - A promise that resolves to an array of cost documents.
+   * @returns {Promise<Array<Object>>} A promise that resolves to an array of cost documents.
    */
   async findAllById(id) {
     return this.collection.find({ user_id: id }).toArray();
@@ -23,7 +27,7 @@ class CostModel extends BaseModel {
    * Finds a single cost record by its unique document ID.
    *
    * @param {string} id - The document ID (_id).
-   * @returns {Promise<Object|null>} - A promise that resolves to the cost document or null if not found.
+   * @returns {Promise<Object|null>} A promise that resolves to the cost document or null if not found.
    */
   async findById(id) {
     return this.collection.findOne({ _id: id });
@@ -32,21 +36,21 @@ class CostModel extends BaseModel {
   /**
    * Inserts a new cost record into the collection.
    *
-   * @param {Object} userData - The cost data to be inserted.
-   * @returns {Promise<Object>} - A promise that resolves to the inserted document's result.
+   * @param {Object} costData - The cost data to be inserted.
+   * @returns {Promise<import("mongodb").InsertOneResult>} A promise that resolves to the result of the insertion.
    */
-  async create(userData) {
-    return this.collection.insertOne(userData);
+  async create(costData) {
+    return this.collection.insertOne(costData);
   }
 
   /**
    * Finds a single cost record by user ID.
    *
    * @param {string} id - The user ID.
-   * @returns {Promise<Object|null>} - A promise that resolves to the first matching cost document or null.
+   * @returns {Promise<Object|null>} A promise that resolves to the first matching cost document or null.
    */
   async findByUserId(id) {
-    return await this.collection.findOne({ user_id: id });
+    return this.collection.findOne({ user_id: id });
   }
 
   /**
@@ -55,13 +59,13 @@ class CostModel extends BaseModel {
    * @param {string} userId - The user ID.
    * @param {number} month - The month (1-12).
    * @param {number} year - The year (YYYY).
-   * @returns {Promise<Array>} - A promise that resolves to an array of cost documents.
+   * @returns {Promise<Array<Object>>} A promise that resolves to an array of cost documents.
    */
   async getUserReport(userId, month, year) {
     const startDate = new Date(year, month - 1, 1); // First day of the given month
     const endDate = new Date(year, month, 1); // First day of the next month
 
-    return await this.collection
+    return this.collection
       .find({
         user_id: userId,
         time: { $gte: startDate, $lt: endDate }, // Filter documents within the given month
