@@ -11,7 +11,7 @@ def run_api_tests():
     sys.stdout = output
 
     # Get base URL from environment or default to localhost
-    base_url = os.getenv('API_BASE_URL', 'http://localhost:3000')
+    base_url = os.getenv('API_BASE_URL', 'https://expense-manger-api.onrender.com')
     
     print("=" * 50)
     print("EXPENSE TRACKER API TESTS")

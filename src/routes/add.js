@@ -7,7 +7,7 @@ const router = express.Router();
  * @route POST /
  * @group Costs - Operations related to cost management
  * @param {Object} req.body - The request body containing cost details.
- * @param {string} req.body.user_id - The ID of the user associated with the cost.
+ * @param {string} req.body.userid - The ID of the user associated with the cost.
  * @param {string} req.body.category - The category of the cost.
  * @param {string} req.body.description - A description of the cost.
  * @param {number} req.body.sum - The amount spent.
@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
   const missingFields = [];
 
   // Check for required fields and add missing ones to the array
-  if (!body.user_id) missingFields.push("user_id");
+  if (!body.userid) missingFields.push("userid");
   if (!body.category) missingFields.push("category");
   if (!body.description) missingFields.push("description");
   if (!body.sum) missingFields.push("sum");
@@ -58,7 +58,7 @@ router.post("/", async (req, res) => {
     }
 
     // Check if user exists
-    const user = await userModel.findByCustomId(body.user_id);
+    const user = await userModel.findByCustomId(body.userid);
     if (!user) {
       return res.status(404).json({
         status: "error",
@@ -79,7 +79,7 @@ router.post("/", async (req, res) => {
     return res.status(200).json({
       status: "success",
       new_cost: {
-        user_id: body.user_id,
+        user_id: body.userid,
         category: body.category,
         description: body.description,
         sum: body.sum,

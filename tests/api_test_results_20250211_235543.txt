@@ -1,0 +1,10 @@
+==================================================
+EXPENSE TRACKER API TESTS
+==================================================
+Testing against server: https://expense-manger-api.onrender.com
+Make sure your Node.js server is running!
+==================================================
+
+Testing getting the about
+-------------------------
+Sending GET request to: https://expense-manger-api.onrender.com/api/about
