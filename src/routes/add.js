@@ -79,7 +79,7 @@ router.post("/", async (req, res) => {
     return res.status(200).json({
       status: "success",
       new_cost: {
-        user_id: body.userid,
+        userid: body.userid,
         category: body.category,
         description: body.description,
         sum: body.sum,

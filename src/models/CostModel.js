@@ -20,7 +20,7 @@ class CostModel extends BaseModel {
    * @returns {Promise<Array<Object>>} A promise that resolves to an array of cost documents.
    */
   async findAllById(id) {
-    return this.collection.find({ user_id: id }).toArray();
+    return this.collection.find({ userid: id }).toArray();
   }
 
   /**
@@ -40,7 +40,7 @@ class CostModel extends BaseModel {
    * @returns {Promise<Object|null>} A promise that resolves to the first matching cost document or null.
    */
   async findByUserId(id) {
-    return this.collection.findOne({ user_id: id });
+    return this.collection.findOne({ userid: id });
   }
 
   /**
