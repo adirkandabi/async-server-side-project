@@ -1,0 +1,37 @@
+==================================================
+EXPENSE TRACKER API TESTS
+==================================================
+Testing against server: https://expense-manger-api.onrender.com
+Make sure your Node.js server is running!
+==================================================
+
+Testing getting the about
+-------------------------
+Sending GET request to: https://expense-manger-api.onrender.com/api/about
+Status code: 200
+Response content:
+{'developers': [{'first_name': 'Adir', 'last_name': 'Kandabi'}, {'first_name': 'Ben', 'last_name': 'Simany'}]}
+
+Testing getting the report - 1
+------------------------------
+Sending GET request to: https://expense-manger-api.onrender.com/api/report
+With params: {'id': '123123', 'year': '2025', 'month': '2'}
+Status code: 200
+Response content:
+{'status': 'success', 'userid': '123123', 'month': 2, 'year': 2025, 'costs': {'food': [], 'health': [], 'housing': [], 'sport': [], 'education': []}}
+
+Testing adding cost item
+----------------------------------
+Sending POST request to: https://expense-manger-api.onrender.com/api/add
+With data: {'userid': 123123, 'description': 'milk 9', 'category': 'food', 'sum': 8}
+Status code: 404
+Error response: {"status":"error","message":"User does not exist"}
+
+Testing getting the report - 2
+------------------------------
+Sending GET request to: https://expense-manger-api.onrender.com/api/report
+With params: {'id': '123123', 'year': '2025', 'month': '2'}
+Status code: 200
+Response content:
+{'status': 'success', 'userid': '123123', 'month': 2, 'year': 2025, 'costs': {'food': [], 'health': [], 'housing': [], 'sport': [], 'education': []}}
+

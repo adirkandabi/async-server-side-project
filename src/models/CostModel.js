@@ -57,7 +57,7 @@ class CostModel extends BaseModel {
 
     return this.collection
       .find({
-        user_id: userId,
+        userid: userId,
         time: { $gte: startDate, $lt: endDate }, // Filter documents within the given month
       })
       .toArray();
